@@ -8,10 +8,17 @@ import math
 import sys
 import json
 import time
-
+from geometry_msgs.msg import Twist
 
 rospy.init_node("dji_board_node")
-#pub = rospy.Publisher('chassis_velocities', Imu, queue_size=1)
+def callback(Twist):
+    rospy.loginfo("Sending cmd:[%.2f,%.2f,%.2f]", Twist.linear.x,Twist.linear.y,Twist.angular.z)
+    send_command(Twist.linear.x,Twist.linear.y,Twist.angular.z)
+
+
+pub = rospy.Publisher('familybot_velocities', Twist, queue_size=1)
+sub = rospy.Subscriber("cmd_vel", Twist, callback)
+sub1= rospy.Subscriber("teleop_cmd_vel", Twist, callback)
 
 port='/dev/dji_board'
 rospy.loginfo("Opening %s...", port)
@@ -20,7 +27,6 @@ def send_command(vx,vy,vz):
     data = { "speed":[vx,vy,vz] }
     data_string = json.dumps(data)
     ser.write('*'+ data_string +';')
-
 
 try:
     ser = serial.Serial(port=port, baudrate=115200, timeout=5)
@@ -40,15 +46,19 @@ while not rospy.is_shutdown():
         linear_x = de_json[1][0]
         linear_y = de_json[1][1]
         angular_z = de_json[1][2]
-        rospy.loginfo("linear_x: " + str(linear_x) + ", linear_y: " + str(linear_y)+ ", angular_z: " + str(angular_z) + "\n\n")
+        rospy.loginfo("get_feedback:[" + str(linear_x) + "," + str(linear_y)+ "," + str(angular_z) + "]\n")
+        twist = Twist()
+        twist.linear.x = float(linear_x); twist.linear.y = float(linear_y); twist.linear.z = float(angular_z)
+        twist.angular.x = 0; twist.angular.y = 0; twist.angular.z = 0
+        pub.publish(twist)
     except:
         None
     #rospy.loginfo(de_json)
     #控制电机速度
-    speed_x = 0
-    speed_y = 30
-    speed_z = 0
-    send_command(speed_x,speed_y,speed_z)
+    # speed_x = 0
+    # speed_y = 30
+    # speed_z = 0
+    # send_command(speed_x,speed_y,speed_z)
 #关闭节点时停止电机
 #time.sleep(1)
 send_command(0,0,0)
