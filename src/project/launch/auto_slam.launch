@@ -10,7 +10,7 @@
   <node pkg="dji_board" type="dji_board_node.py" name="dji_board_node" output="screen">
   </node>
   <!--激光雷达里程计-->
-  <include file="$(find art_racecar)/launch/includes/rf2o.launch.xml" />
+  <include file="$(find project)/launch/includes/rf2o.launch.xml" />
   <!--定位-->
   <node pkg="robot_localization" type="ekf_localization_node" name="ekf_localization"> 
         <remap from="odometry/filtered" to="odom" />
