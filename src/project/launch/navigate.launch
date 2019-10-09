@@ -1,0 +1,27 @@
+<launch>
+  <master auto="start"/>
+
+  <!-- TF setting 坐标变换-->
+  <include file="$(find project)/launch/includes/art_car_tf.launch.xml" />
+  <!--启动雷达-->
+  <include file="$(find project)/launch/lidar/rplidar.launch" />
+  <!--启动底盘-->
+  <node pkg="dji_board" type="dji_board_node.py" name="dji_board_node" output="screen">
+  </node>
+  <!--激光雷达里程计-->
+  <!--<include file="$(find art_racecar)/launch/includes/rf2o.launch.xml" />-->
+
+  <!--gmapping-->
+  <!--<include file="$(find rikirobot)/launch/lidar/gmapping.launch" />-->
+  <arg name="scan_topic"              default="scan"/>
+  <include file="$(find project)/launch/rplidar.launch" />
+  <arg name="map_file" default="$(find project)/maps/test.yaml"/>
+  <node pkg="map_server" name="map_server"  type="map_server" args="$(arg map_file)" />
+
+  <include file="$(find project)/launch/amcl.launch" />
+  <include file="$(find project)/launch/params/move_base.xml" />
+  <node pkg="topic_tools" type="throttle" name="relay_scan" args="messages scan 5 $(arg scan_topic)" required="true">
+    <param name="lazy" value="false"/>
+  </node>
+
+</launch>
