@@ -16,7 +16,7 @@ def callback(Twist):
     send_command(Twist.linear.x,Twist.linear.y,Twist.angular.z)
 
 
-pub = rospy.Publisher('familybot_velocities', Twist, queue_size=1)
+pub = rospy.Publisher('currant_vel', Twist, queue_size=1)
 sub = rospy.Subscriber("cmd_vel", Twist, callback)
 sub1= rospy.Subscriber("teleop_cmd_vel", Twist, callback)
 
