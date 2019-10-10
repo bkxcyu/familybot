@@ -13,7 +13,10 @@ from geometry_msgs.msg import Twist
 rospy.init_node("dji_board_node")
 def callback(Twist):
     rospy.loginfo("Sending cmd:[%.2f,%.2f,%.2f]", Twist.linear.x,Twist.linear.y,Twist.angular.z)
-    send_command(Twist.linear.x,Twist.linear.y,Twist.angular.z)
+    x=38.61*Twist.linear.x+1.27
+    y=38.61*Twist.linear.y+1.27
+    z=38.61*Twist.angular.z+1.27
+    send_command(-int(y),int(x),int(z))
 
 
 pub = rospy.Publisher('familybot_velocities', Twist, queue_size=1)
@@ -46,7 +49,7 @@ while not rospy.is_shutdown():
         linear_x = de_json[1][0]
         linear_y = de_json[1][1]
         angular_z = de_json[1][2]
-        rospy.loginfo("get_feedback:[" + str(linear_x) + "," + str(linear_y)+ "," + str(angular_z) + "]\n")
+        # rospy.loginfo("get_feedback:[" + str(linear_x) + "," + str(linear_y)+ "," + str(angular_z) + "]\n")
         twist = Twist()
         twist.linear.x = float(linear_x); twist.linear.y = float(linear_y); twist.linear.z = float(angular_z)
         twist.angular.x = 0; twist.angular.y = 0; twist.angular.z = 0

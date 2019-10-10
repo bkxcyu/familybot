@@ -12,7 +12,7 @@ int main(int argc, char** argv){
   ros::Publisher odom_pub = _n.advertise<nav_msgs::Odometry>("odom", 50);
   ros::Subscriber sub = _n.subscribe("familybot_velocities", 1000, odomCallback);//激活回调函数
   tf::TransformBroadcaster odom_broadcaster;
-  void odomCallback(geometry_msgs::msg Twist)
+  void odomCallback(const geometry_msgs::Twist& Twist)
   {
   
   double x = 0.0;
@@ -23,11 +23,11 @@ int main(int argc, char** argv){
 
  
 
-  double vx = Twist.;
+  double vx = Twist.linear.x;
 
-  double vy = Twist.;
+  double vy = Twist.linear.y;
 
-  double vth = 0.1;
+  double vth =Twist.angular.z;
 
  
 
