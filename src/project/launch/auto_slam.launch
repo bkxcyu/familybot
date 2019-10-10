@@ -10,7 +10,6 @@
   <node pkg="dji_board" type="dji_board_node.py" name="dji_board_node" output="screen" />
   <node pkg="dji_board" type="robot_base_odom" name="robot_base_odom" />
 
-<!--------------------------------------------------------------------------------------------------->
   <!--激光雷达里程计-->
   <include file="$(find project)/launch/params/rf2o.launch.xml" />
   <!--定位-->

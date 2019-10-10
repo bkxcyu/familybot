@@ -1,4 +1,5 @@
 <launch>
+
     <!-- Set to your sensor's range -->
     <arg name="sensor_range" default="1.0"/>
 
@@ -11,7 +12,6 @@
 
         #All standard costmap_2d parameters as in move_base, other than BoundedExploreLayer
         <rosparam ns="explore_costmap" subst_value="true">
-            #Sample parameters
             footprint: [[0.1, 0.0], [0.0, 0.1], [-0.1, 0.0], [0.0, -0.1]]
             robot_radius: 0.10
 
@@ -19,22 +19,33 @@
             update_frequency: 5.0
             publish_frequency: 5.0
 
+            #must match incoming static map
             global_frame: map
             robot_base_frame: base_link
             resolution: 0.05
 
-            rolling_window: true
+            rolling_window: false
             track_unknown_space: true
 
             plugins:
 
+                - {name: static,           type: "costmap_2d::StaticLayer"}
                 - {name: explore_boundary, type: "frontier_exploration::BoundedExploreLayer"}
+                #Can disable sensor layer if gmapping is fast enough to update scans
                 - {name: sensor,           type: "costmap_2d::ObstacleLayer"}
                 - {name: inflation,        type: "costmap_2d::InflationLayer"}
 
+            static:
+                #Can pull data from gmapping, map_server or a non-rolling costmap
+                map_topic: /map
+                # map_topic: move_base/global_costmap/costmap
+                subscribe_to_updates: true
+
             explore_boundary:
-                resize_to_boundary: true
-                frontier_travel_point: closest
+                resize_to_boundary: false
+                frontier_travel_point: middle
+                #set to false for gmapping, true if re-exploring a known area
+                explore_clear_space: false
 
             sensor:
                 observation_sources: laser
@@ -43,4 +54,6 @@
             inflation:
                 inflation_radius: 0.15
       </rosparam>
+    </node>
+
 </launch>
