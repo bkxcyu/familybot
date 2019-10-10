@@ -7,8 +7,10 @@
   <!--启动雷达-->
   <include file="$(find project)/launch/rplidar.launch" />
   <!--启动底盘-->
-  <node pkg="dji_board" type="dji_board_node.py" name="dji_board_node" output="screen">
-  </node>
+  <node pkg="dji_board" type="dji_board_node.py" name="dji_board_node" output="screen" />
+  <node pkg="dji_board" type="robot_base_odom" name="robot_base_odom" />
+
+<!--------------------------------------------------------------------------------------------------->
   <!--激光雷达里程计-->
   <include file="$(find project)/launch/params/rf2o.launch.xml" />
   <!--定位-->
@@ -16,14 +18,20 @@
         <remap from="odometry/filtered" to="odom" />
         <rosparam command="load" file="$(find project)/launch/params/robot_localization.yaml" />
   </node>
-
+ <!--蒙特卡罗-->
   <include file="$(find project)/launch/params/amcl.launch.xml">
         <arg name="init_x" value="0.0"/>
         <arg name="init_y" value="0.0"/>
         <arg name="init_a" value="0.0"/>
   </include>
 
+
+  <!--<include file="$(find navigation_stage)/move_base_config/move_base.xml"/>
+  <include file="$(find navigation_stage)/move_base_config/slam_gmapping.xml"/> -->
+
   <include file="$(find project)/launch/params/slam_gmapping.xml" />
   <include file="$(find project)/launch/params/move_base.xml" />
   <include file="$(find project)/launch/global_map.launch" />
+
+  <node name="rviz" pkg="rviz" type="rviz" args="-d $(find navigation_stage)/single_robot.rviz" />
 </launch>
