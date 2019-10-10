@@ -2,25 +2,31 @@
   <master auto="start"/>
 
    <!-- TF setting 坐标变换-->
-  <node pkg="tf" type="static_transform_publisher" name="base_link2laser_link" args="0.0 0.0 0.0 0.0 0.0 0.0 /base_link /laser 10"/>
+  <!--<node pkg="tf" type="static_transform_publisher" name="base_link2laser_link" args="0.0 0.0 0.0 0.0 0.0 0.0 /base_link /laser 10"/>-->
   <node pkg="tf" type="static_transform_publisher" name="base_footprint_to_base_link" args="0 0 0.5 0 0 0  /base_footprint /base_link  10"/>
   <!--启动雷达-->
   <include file="$(find project)/launch/rplidar.launch" />
   <!--启动底盘-->
   <node pkg="dji_board" type="dji_board_node.py" name="dji_board_node" output="screen">
   </node>
-
-  <include file="$(find project)/launch/params/rf2o.launch.xml"/>
+  <!--激光雷达里程计-->
+  <include file="$(find art_racecar)/launch/includes/rf2o.launch.xml" />
+  <!--定位-->
+  <node pkg="robot_localization" type="ekf_localization_node" name="ekf_localization"> 
+        <remap from="odometry/filtered" to="odom" />
+        <rosparam command="load" file="$(find project)/launch/params/robot_localization.yaml" />
+  </node>
 
   <arg name="scan_topic"              default="scan"/>
-  <arg name="map_file" default="$(find project)/maps/test.yaml"/>
+  <!--地图名-->
+  <arg name="map_file" default="$(find project)/maps/mymap.yaml"/>
   <node pkg="map_server" name="map_server"  type="map_server" args="$(arg map_file)" />
 
   <include file="$(find project)/launch/amcl.launch" />
   <include file="$(find project)/launch/params/move_base.xml" />
 
-  <node pkg="topic_tools" type="throttle" name="relay_scan" args="messages scan 5 $(arg scan_topic)" required="true">
+  <!--<node pkg="topic_tools" type="throttle" name="relay_scan" args="messages scan 5 $(arg scan_topic)" required="true">
     <param name="lazy" value="false"/>
-  </node>
+  </node>-->
 
 </launch>

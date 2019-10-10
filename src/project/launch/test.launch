@@ -1,0 +1,9 @@
+<launch>
+  <master auto="start"/>
+
+  <include file="$(find project)/launch/stage_sim_env.launch" />
+
+  <!--<include file="$(find project)/launch/params/slam_gmapping.xml" />-->
+  <!--<include file="$(find project)/launch/params/move_base.xml" />-->
+  <include file="$(find project)/launch/global_map.launch" />
+</launch>
