@@ -15,11 +15,11 @@ def callback(Twist):
     rospy.loginfo("Sending cmd:[%.2f,%.2f,%.2f]", Twist.linear.x,Twist.linear.y,Twist.angular.z)
     x=38.61*Twist.linear.x+1.27
     y=38.61*Twist.linear.y+1.27
-    z=38.61*Twist.angular.z+1.27
-    send_command(-int(y),int(x),int(z))
+    z=80*Twist.angular.z+1.27
+    send_command(int(y),-int(x),int(z))
 
 
-pub = rospy.Publisher('currant_vel', Twist, queue_size=1)
+pub = rospy.Publisher('currant_vel', Twist, queue_size=10)
 sub = rospy.Subscriber("cmd_vel", Twist, callback)
 sub1= rospy.Subscriber("teleop_cmd_vel", Twist, callback)
 
@@ -51,8 +51,21 @@ while not rospy.is_shutdown():
         angular_z = de_json[1][2]
         # rospy.loginfo("get_feedback:[" + str(linear_x) + "," + str(linear_y)+ "," + str(angular_z) + "]\n")
         twist = Twist()
-        twist.linear.x = float(linear_x); twist.linear.y = float(linear_y); twist.linear.z = float(angular_z)
-        twist.angular.x = 0; twist.angular.y = 0; twist.angular.z = 0
+
+        #speed_mps=(pwm-1.27)/38.61
+        x=-(linear_y-1.27)/38.61
+        y=-(linear_x-1.27)/38.61
+        z=angular_z*2.7
+        
+        # re   rad/s
+        # 0.33 0.918
+        # 0.55 1.53
+        # 0.7  1.93
+
+
+        rospy.loginfo("resive base:[%.2f,%.2f,%.2f]",x,y,z)
+        twist.linear.x = float(x); twist.linear.y =float(y); twist.linear.z = 0
+        twist.angular.x = 0; twist.angular.y = 0; twist.angular.z = float(z)
         pub.publish(twist)
     except:
         None

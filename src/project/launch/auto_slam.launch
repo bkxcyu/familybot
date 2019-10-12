@@ -4,11 +4,14 @@
   <!-- TF setting 坐标变换-->
   <!--<node pkg="tf" type="static_transform_publisher" name="base_link2laser_link" args="0.0 0.0 0.0 0.0 0.0 0.0 /base_link /laser 10"/>-->
   <node pkg="tf" type="static_transform_publisher" name="base_footprint_to_base_link" args="0 0 0.3 0 0 0  /base_footprint /base_link  10"/>
+  <node pkg="tf" type="static_transform_publisher" name="base_link2imu" args="0.0 0.0 0.0 0.0 0.0 0.0 /base_link /IMU_link 10"/>
   <!--启动雷达-->
   <include file="$(find project)/launch/rplidar.launch" />
   <!--启动底盘-->
-  <node pkg="dji_board" type="dji_board_node.py" name="dji_board_node" output="screen" />
+  <node pkg="dji_board" type="dji_board_node.py" name="dji_board_node"  />
   <node pkg="dji_board" type="robot_base_odom" name="robot_base_odom" />
+  <!-- IMU -->
+  <include file="$(find art_imu)/launch/imu.launch" />
 
   <!--激光雷达里程计-->
   <include file="$(find project)/launch/params/rf2o.launch.xml" />
@@ -18,17 +21,17 @@
         <rosparam command="load" file="$(find project)/launch/params/robot_localization.yaml" />
   </node>
  <!--蒙特卡罗-->
-  <include file="$(find project)/launch/params/amcl.launch.xml">
-        <arg name="init_x" value="0.0"/>
+  <include file="$(find project)/launch/amcl.launch">
+        <!--<arg name="init_x" value="0.0"/>
         <arg name="init_y" value="0.0"/>
-        <arg name="init_a" value="0.0"/>
+        <arg name="init_a" value="0.0"/>-->
   </include>
-
 
   <!--<include file="$(find navigation_stage)/move_base_config/move_base.xml"/>
   <include file="$(find navigation_stage)/move_base_config/slam_gmapping.xml"/> -->
 
   <include file="$(find project)/launch/params/slam_gmapping.xml" />
+  <!--<include file="$(find project)/launch/hector.launch" />-->
   <include file="$(find project)/launch/params/move_base.xml" />
   <include file="$(find project)/launch/global_map.launch" />
 
