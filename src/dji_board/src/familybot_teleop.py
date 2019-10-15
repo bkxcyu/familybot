@@ -86,7 +86,7 @@ if __name__=="__main__":
     status = 0
 
     try:
-        print(msg)
+        # print(msg)
         print(vels(speed,turn))
         while(1):
             key = getKey()

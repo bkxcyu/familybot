@@ -1,4 +1,0 @@
-<launch>
-  <node pkg="dji_board" type="dji_board_node.py" name="dji_board_node" output="screen">
-  </node>
-</launch>
